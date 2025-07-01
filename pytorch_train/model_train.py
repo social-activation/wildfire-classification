@@ -52,10 +52,12 @@ print("Training set:", len(paths_train), "| Testing set:", len(paths_test))
 
 num = 4
 
-indices = random.sample(range(len(train_dataset)), num)
+indices = random.sample(range(len(train_dataset)), num*num)
 
 plt.clf()
-fig, axes = plt.subplots(1,num, figsize=(10,3), layout="constrained")
+fig, axes = plt.subplots(num,num, figsize=(10,3), layout="constrained")
+
+axes = axes.flatten()
 
 for ax, idx in zip(axes, indices):
     image, label = train_dataset[idx]
@@ -69,7 +71,7 @@ plt.savefig("training_data/display_model_input.png")
 
 
 
-
+exit
 
 
 batch_size=64

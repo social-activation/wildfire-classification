@@ -53,3 +53,38 @@ class SmallLeNet(nn.Module):
         x = F.relu(self.fc1(x))
         x = torch.sigmoid(self.fc2(x))
         return x
+
+
+
+class LargerFeatureExtractorNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # Conv layers with increasing filters
+        self.conv1 = nn.Conv2d(3, 16, kernel_size=3, padding=1)   # 3 → 16 channels
+        self.bn1 = nn.BatchNorm2d(16)
+        self.conv2 = nn.Conv2d(16, 32, kernel_size=3, padding=1)  # 16 → 32 channels
+        self.bn2 = nn.BatchNorm2d(32)
+        self.conv3 = nn.Conv2d(32, 64, kernel_size=3, padding=1)  # 32 → 64 channels
+        self.bn3 = nn.BatchNorm2d(64)
+
+        self.pool = nn.MaxPool2d(2)
+        self.global_pool = nn.AdaptiveAvgPool2d((1, 1))
+
+        # Fully connected layers
+        self.fc1 = nn.Linear(64, 64)
+        self.fc2 = nn.Linear(64, 16)
+        self.fc3 = nn.Linear(16, 1)
+
+    def forward(self, x):
+        x = self.pool(F.relu(self.bn1(self.conv1(x))))  # 3->16, spatial/2
+        x = self.pool(F.relu(self.bn2(self.conv2(x))))  # 16->32, spatial/4
+        x = self.pool(F.relu(self.bn3(self.conv3(x))))  # 32->64, spatial/8
+
+        x = self.global_pool(x)                          # -> (B, 64, 1, 1)
+        x = x.view(x.size(0), -1)                        # flatten (B, 64)
+
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = torch.sigmoid(self.fc3(x))
+
+        return x

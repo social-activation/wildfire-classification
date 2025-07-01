@@ -1,11 +1,14 @@
 import torch
 from models import *
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 # model = LeNet().to(device)
-model = SmallLeNet()
+model = SmallLeNet().to(device)
+# model = LargerFeatureExtractorNet().to(device)
 
 # Load saved weights
-model.load_state_dict(torch.load("training_data/wildfire_classifier.pth", map_location=torch.device('cpu')))
+model.load_state_dict(torch.load("training_data/wildfire_classifier.pth", map_location=torch.device(device)))
 
 def export_model_to_onnx(model, filename="fire_classifier.onnx"):
     model.eval()
