@@ -18,7 +18,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = SmallLeNet().to(device)
 
 # Load saved weights
-model.load_state_dict(torch.load("training_data/wildfire_classifier.pth"))
+model.load_state_dict(torch.load("training_data/wildfire_classifier.pth", map_location=torch.device(device)))
 
 
 model.eval()
@@ -89,4 +89,4 @@ for i in range(confu.shape[0]):
 acc = accuracy_score(all_labels, all_preds)
 print(f"Test Accuracy: {acc:.5f}")
 
-plt.savefig("confusion_matrix.png")
+plt.savefig("training_data/confusion_matrix.png")
